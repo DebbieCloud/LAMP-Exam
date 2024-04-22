@@ -1,0 +1,27 @@
+---
+- name: Implementing bash script and cron job
+  hosts: 192.168.33.20
+  become: yes        
+
+
+  tasks:
+    - name: Copy Bash Script
+      copy:
+        src: lamp_deploy.sh
+        dest: /home/vagrant/
+        mode: 0755
+
+    - name: Execute Bash Script
+      command: /home/vagrant/lamp_deploy.sh
+
+    - name: Set up server for log file
+      file:
+        path: /var/log/server_uptime.log
+        state: touch
+
+    - name: Set up Cron Job to check uptime
+      cron:
+        name: "Uptime Check"
+        minute: 0 
+        hour: 0
+        job: "/usr/bin/uptime >> /var/log/server_uptime.log" 
